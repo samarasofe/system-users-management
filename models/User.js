@@ -1,4 +1,5 @@
 // const { json } = require("express");
+//Object.assign() =  Copia atributos de ojetos e mescla gerando um novo objeto
 
 class User {
 
@@ -93,11 +94,16 @@ class User {
 
     getNewID(){
 
-        if (!window.id) window.id = 0; 
+        let usersID = parseInt(localStorage.getItem("usersID"));
 
-        id++;
+        if (!usersID > 0) usersID = 0; 
 
-        return id;
+        usersID++;
+
+        localStorage.setItem("usersID", usersID);
+
+        return usersID;
+        
     }
 
     save() {
@@ -106,11 +112,12 @@ class User {
 
         if (this.id > 0) {
 
-            users.map(u=>{
+            users.map((u)=>{
 
-                if (u._id === this.id) {
+                if (u._id == this.id) {
 
-                    u = this;
+                    Object.assign(u, this);
+
                 }
 
                 return u;
@@ -126,5 +133,21 @@ class User {
 
         localStorage.setItem("users", JSON.stringify(users));
 
+    }
+
+    remove(){
+
+        let users = User.getUsersStorage();
+
+        users.forEach((userData, index)=>{
+
+            if (this._id == userData._id) {
+
+                users.splice(index, 1);  //A função Splice modifica o conteúdo de um array: removendo, substituindo ou adicionando elementos a ele.
+            }
+
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
     }
 }
